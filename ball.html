@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Making an interactive video using Javascript</title>
+				
+		<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+				
+		<script>
+			var canvas,stage,bg,score,image,bmpList,bitmap,txt,play,gameTxt,mouseTarget,mouseover,bgrnd;
+			
+			function init(){
+				canvas = document.getElementById("canvas");
+				stage = new createjs.Stage(canvas);
+				score = 0;
+				
+				stage.mouseMoveOutside = true; // keep tracking the mouse even when it leaves the canvas
+				
+				soccer = new Image();
+				soccer.src = "Soccer ball_small.png";
+				soccer.onload = setSoccer;
+				
+				image = new Image();
+				image.src = "red_ball.png";
+				image.onload = createBalls;
+			}
+			
+			function setSoccer(event){
+				bgrnd = new createjs.Bitmap(soccer);
+				stage.addChild(bgrnd);
+				bgrnd.on("pressmove", function(evt) {
+					evt.target.x = evt.stageX - evt.target.getBounds().width/2;
+					evt.target.y = evt.stageY - evt.target.getBounds().height/2;
+					
+					
+					
+					for(var i=0; i<bmpList.length; i++){
+						
+						if(evt.target.x + evt.target.getBounds().width + 50 == bmpList[i].x || evt.target.x + evt.target.getBounds().width - 50 == bmpList[i].x){
+							console.log(bmpList[i].x);
+							
+							if(evt.target.x > bmpList[i].x){
+								if(bmpList[i].x < 20){
+									bmpList[i].x = evt.target.x + evt.target.getBounds().width + 50;
+								}else{
+									bmpList[i].x -= 20;
+								}
+								
+								
+							}else if(evt.target.x < bmpList[i].x){
+								
+								if(bmpList[i].x > canvas.width - 20){
+									bmpList[i].x = evt.target.x - 50;
+								}else{
+									bmpList[i].x += 20;
+								}
+							}
+							
+						}else if(evt.target.y + evt.target.getBounds().height + 50 == bmpList[i].y || evt.target.y + evt.target.getBounds().height - 50 == bmpList[i].y){
+							if(evt.target.y > bmpList[i].y){
+								if(bmpList[i].y < 20){
+									bmpList[i].y = evt.target.y + evt.target.getBounds().height + 50;
+								}else{
+									bmpList[i].y -= 20;
+								}
+								
+								
+							}else if(evt.target.y < bmpList[i].y){
+								
+								if(bmpList[i].y > canvas.height - 20){
+									bmpList[i].y = evt.target.y - 50;
+								}else{
+									bmpList[i].y += 20;
+								}
+							}
+						}
+					}
+					
+				});
+				stage.update();
+			}
+			
+			function createBalls(event){
+				var image = event.target;
+				var container = new createjs.Container();
+				stage.addChild(container);
+				var l = 5;
+				bmpList = [];
+				for(var i=0; i<l; i++){
+					bitmap = new createjs.Bitmap(image);
+					container.addChild(bitmap);
+					bitmap.name = "ball" + i;
+					resetEnemy(bitmap);
+					bitmap.regX = bitmap.image.width/2|0;
+					bitmap.regY = bitmap.image.height/2|0;
+					bitmap.mouseEnabled = true;
+					bmpList.push(bitmap);
+					console.log(bmpList[i].x);
+				}
+				
+				createjs.Ticker.addEventListener("tick", tick);
+			}
+			
+			function resetEnemy(ball){
+				ball.x = canvas.width * Math.random()|0;
+				ball.y = canvas.height * Math.random()|0;
+			}
+			
+			function tick(){
+				//check for clicking
+				/**/
+				
+				stage.update();
+			}
+			
+			
+			
+		</script>
+			
+	</head>
+	
+	<body onLoad=init();>
+		
+		<canvas id="canvas" width="300" height="300"></canvas>
+	</body>
+	
+</html>
